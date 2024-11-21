@@ -12,19 +12,34 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\MenuController;
-
+use App\Http\Middleware\GuestMiddleware;
+use App\Http\Middleware\AdminMiddleware;
 // Route::get('/', function () {
 //     return view('welcome');
 // });
-Route::get('/dashboard', function () {
-    return view('dashboard');
-});
+// Route::get('/dashboard', function () {
+//     return view('dashboard');
+// });
 
 // Route::get('/login', function () {
 //     return view('login');
 // });
+// Rute untuk menampilkan form login
+Route::middleware(GuestMiddleware::class)->group(function () {
+    Route::get('/', [LoginController::class, 'index']);
+    Route::post('/authenticate', [LoginController::class, 'authenticate'])->name('login');
+    // registrasi
+    Route::get('/register', [RegisterController::class, 'showRegistrationForm'])->name('register');
+    Route::post('/proses-register', [RegisterController::class, 'register'])->name('register.post');
+});
 
-Route::get('/', [DashboardController::class, 'index']);
+// Rute untuk logout
+
+Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
+
+Route::middleware([AdminMiddleware::class])->group(function () {
+
+Route::get('/dashboard', [DashboardController::class, 'index']);
 
 Route::get('/buku', [BukuController::class, 'index']);
 Route::post('/addbuku', [BukuController::class, 'add_buku']);
@@ -55,3 +70,4 @@ Route::post('/menus', [MenuController::class, 'store'])->name('menus.store');  /
 Route::get('/menus/{menu}/edit', [MenuController::class, 'edit'])->name('menus.edit');  // Menampilkan form edit menu (GET)
 Route::put('/menus/{menu}', [MenuController::class, 'update'])->name('menus.update');  // Memperbarui menu (PUT)
 Route::delete('/menus/{menu}', [MenuController::class, 'destroy'])->name('menus.destroy');  // Menghapus menu (DELETE)
+});

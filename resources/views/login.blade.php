@@ -18,7 +18,7 @@
     <!-- inject:css -->
     <link rel="stylesheet" href="../../assets/css/style.css">
     <!-- endinject -->
-    <link rel="shortcut icon" href="../../assets/images/favicon.png" />
+    <link rel="shortcut icon" href="{{ asset('assets/images/logo_project.jpg') }}" />
 </head>
 
 <body>
@@ -29,11 +29,11 @@
                     <div class="col-lg-4 mx-auto">
                         <div class="auth-form-light text-left py-5 px-4 px-sm-5">
                             <div class="brand-logo">
-                                <img src="../../assets/images/logo.svg" alt="logo">
+                                <img src="{{ asset('assets/images/logo_project.jpg') }}" alt="logo">
                             </div>
                             <h4>Already have an account?</h4>
                             <h6 class="font-weight-light">Login here</h6>
-                            <form action="/login" method="POST" class="pt-3">
+                            <form action="{{ route('login') }}" method="post">
                                 @csrf
                                 <div class="form-group">
                                     <input type="email" class="form-control form-control-lg" id="email"
