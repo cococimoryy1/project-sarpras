@@ -15,7 +15,7 @@ class UserSeeder extends Seeder
             ['username' => 'admin'], // Kondisi untuk mengecek keberadaan data
             [
                 'email' => 'admin@gmail.com',
-                'password' => Hash::make('password'),
+                'password' => Hash::make('12345678'),
                 'role_id' => 1, // ID role Admin
                 'created_at' => now(),
                 'updated_at' => now(),
@@ -27,7 +27,7 @@ class UserSeeder extends Seeder
             ['username' => 'user'],
             [
                 'email' => 'user@gmail.com',
-                'password' => Hash::make('password'),
+                'password' => Hash::make('12345678'),
                 'role_id' => 2, // ID role User
                 'created_at' => now(),
                 'updated_at' => now(),

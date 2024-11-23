@@ -75,4 +75,5 @@ Route::delete('/menus/{menu}', [MenuController::class, 'destroy'])->name('menus.
 });
 
 
-Route::get('barang', [BarangController::class, 'index'])->name('barang.index');
+
+Route::resource('barang', BarangController::class);

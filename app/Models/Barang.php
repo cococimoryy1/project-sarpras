@@ -9,23 +9,19 @@ class Barang extends Model
 {
     use HasFactory;
 
-    // Nama tabel di database
     protected $table = 'barang';
+    protected $primaryKey = 'barang_id';
 
-    // Primary Key
-    protected $primaryKey = 'idbarang';
-
-    // Kolom yang bisa diisi (Mass Assignment)
     protected $fillable = [
-        'nama',
-        'harga_satuan',
-        'status',
-        'idsatuan',
+        'nama_barang',
+        'deskripsi_barang',
+        'kategori_barang',
+        'status_barang',
+        'jumlah_total',
+        'jumlah_tersedia',
     ];
 
-    // Relasi ke tabel Satuan
-    public function satuan()
-    {
-        return $this->belongsTo(Satuan::class, 'idsatuan', 'idsatuan');
-    }
+
+
+
 }
