@@ -4,6 +4,7 @@ use App\Http\Controllers\BarangController;
 use Illuminate\Support\Facades\Route;
 use App\Models\Buku;
 use App\Models\Category;
+
 use App\Http\Controllers\BukuController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\RegisterController;
@@ -14,6 +15,7 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\MenuController;
 use App\Http\Middleware\GuestMiddleware;
 use App\Http\Middleware\AdminMiddleware;
+
 // Route::get('/', function () {
 //     return view('welcome');
 // });
@@ -71,3 +73,7 @@ Route::get('/menus/{menu}/edit', [MenuController::class, 'edit'])->name('menus.e
 Route::put('/menus/{menu}', [MenuController::class, 'update'])->name('menus.update');  // Memperbarui menu (PUT)
 Route::delete('/menus/{menu}', [MenuController::class, 'destroy'])->name('menus.destroy');  // Menghapus menu (DELETE)
 });
+
+
+
+Route::resource('barang', BarangController::class);

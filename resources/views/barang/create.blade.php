@@ -2,7 +2,7 @@
 
 @section('content')
 <div class="container-fluid">
-    <h1>Edit Barang</h1>
+    <h1>Tambah Barang</h1>
 
     <!-- Menampilkan pesan sukses atau error -->
     @if (session('success'))
@@ -12,26 +12,25 @@
         <div class="alert alert-danger">{{ session('error') }}</div>
     @endif
 
-    <!-- Form Input Edit Barang -->
+    <!-- Form Input Barang -->
     <div class="card mb-4">
-        <div class="card-header">Edit Barang</div>
+        <div class="card-header">Tambah Barang</div>
         <div class="card-body">
-            <form action="{{ route('barang.update', $barang->barang_id) }}" method="POST">
+            <form action="{{ route('barang.store') }}" method="POST">
                 @csrf
-                @method('PUT')
                 <div class="form-group">
                     <label for="nama_barang">Nama Barang:</label>
-                    <input type="text" id="nama_barang" name="nama_barang" class="form-control" value="{{ old('nama_barang', $barang->nama_barang) }}" required>
+                    <input type="text" id="nama_barang" name="nama_barang" class="form-control" placeholder="Masukkan nama barang" required>
                 </div>
                 <div class="form-group">
                     <label for="jumlah_total">Jumlah Total:</label>
-                    <input type="number" id="jumlah_total" name="jumlah_total" class="form-control" value="{{ old('jumlah_total', $barang->jumlah_total) }}" required>
+                    <input type="number" id="jumlah_total" name="jumlah_total" class="form-control" placeholder="Masukkan jumlah total barang" required>
                 </div>
                 <div class="form-group">
                     <label for="jumlah_tersedia">Jumlah Tersedia:</label>
-                    <input type="number" id="jumlah_tersedia" name="jumlah_tersedia" class="form-control" value="{{ old('jumlah_tersedia', $barang->jumlah_tersedia) }}" required>
+                    <input type="number" id="jumlah_tersedia" name="jumlah_tersedia" class="form-control" placeholder="Masukkan jumlah barang yang tersedia" required>
                 </div>
-                <button type="submit" class="btn btn-primary">Update Barang</button>
+                <button type="submit" class="btn btn-primary">Simpan</button>
             </form>
         </div>
     </div>

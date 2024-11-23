@@ -3,15 +3,20 @@
 namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
-use Illuminate\Support\Facades\DB;
+use App\Models\Role;
 
 class RoleSeeder extends Seeder
 {
-    public function run(): void
+    public function run()
     {
-        DB::table('roles')->insert([
-            ['name' => 'Admin', 'description' => 'Full access to the system'],
-            ['name' => 'User', 'description' => 'Regular user with limited permissions'],
-        ]);
+        Role::updateOrInsert(
+            ['name' => 'Admin'], // Kondisi untuk mengecek duplikat
+            ['description' => 'Full access to the system'] // Data yang di-update atau ditambahkan
+        );
+
+        Role::updateOrInsert(
+            ['name' => 'User'],
+            ['description' => 'Regular user with limited permissions']
+        );
     }
 }

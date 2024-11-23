@@ -13,6 +13,12 @@
         </a>
       </li>
       <li class="nav-item">
+        <a class="nav-link" href="/barang">
+          <i class="icon-grid menu-icon"></i>
+          <span class="menu-title">Barang</span>
+        </a>
+      </li>
+      <li class="nav-item">
         <a class="nav-link" href="/users">
           <i class="icon-grid menu-icon"></i>
           <span class="menu-title">User</span>
