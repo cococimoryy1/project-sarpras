@@ -1,73 +1,118 @@
 <?php
+
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
 use App\Models\Barang;
+use App\Models\Category;
+use App\Models\KetersediaanBarang;
+use Illuminate\Http\Request;
+
 
 class BarangController extends Controller
 {
+    // Menampilkan form untuk membuat barang baru
+    public function create()
+    {
+        $kategoriBarangs = Category::all(); // Mengambil semua data kategori
+        return view('barang.create', compact('kategoriBarangs'));
+    }
+
+    // Menyimpan barang baru ke dalam database
+    public function store(Request $request)
+    {
+        // Validasi input
+        $validated = $request->validate([
+            'nama_barang' => 'required|string|max:100',
+            'deskripsi_barang' => 'nullable|string',
+            'kategori_barang_id' => 'required|exists:kategori,id_kategori',
+            'jumlah_total' => 'required|integer|min:1',
+        ]);
+
+        // Menyimpan data barang ke database
+        $barang = Barang::create([
+            'nama_barang' => $validated['nama_barang'],
+            'deskripsi_barang' => $validated['deskripsi_barang'],
+            'kategori_barang_id' => $validated['kategori_barang_id'],
+            'jumlah_total' => $validated['jumlah_total'],
+            'jumlah_tersedia' => $validated['jumlah_total'], // Menyimpan jumlah_tersedia pada tabel barang
+        ]);
+
+        // Menambahkan ketersediaan untuk barang yang baru ditambahkan
+        // Cek apakah sudah ada entri ketersediaan untuk barang ini
+        $ketersediaan = KetersediaanBarang::where('barang_id', $barang->barang_id)->first();
+
+        if ($ketersediaan) {
+            // Jika entri ketersediaan sudah ada, perbarui jumlah_tersedia
+            $ketersediaan->jumlah_tersedia += $validated['jumlah_total']; // Menambah jumlah tersedia
+            $ketersediaan->tanggal_terakhir_update = now(); // Perbarui tanggal terakhir
+            $ketersediaan->save();
+        } else {
+            // Jika belum ada entri ketersediaan, buat entri baru
+            KetersediaanBarang::create([
+                'barang_id' => $barang->barang_id,
+                'status_tersedia' => 'tersedia',  // Status awal barang adalah tersedia
+                'jumlah_tersedia' => $validated['jumlah_total'], // Jumlah tersedia sesuai dengan jumlah total barang
+                'tanggal_terakhir_update' => now(),
+            ]);
+        }
+
+        // Redirect ke halaman daftar barang setelah berhasil
+        return redirect()->route('barangs.index')->with('success', 'Barang berhasil ditambahkan.');
+    }
+
+
+
+
+
     // Menampilkan daftar barang
     public function index()
     {
-        $barangs = Barang::all();
+        $barangs = Barang::with('kategori')->get(); // Memuat data barang beserta kategori terkait
         return view('barang.index', compact('barangs'));
     }
 
-    // Menampilkan form untuk tambah barang
-    public function create()
-    {
-        return view('barang.create');
-    }
-
-    // Menyimpan barang baru
-    public function store(Request $request)
-    {
-        $request->validate([
-            'nama_barang' => 'required|string|max:100',
-            'jumlah_total' => 'required|integer|min:1',
-            'jumlah_tersedia' => 'required|integer|min:0',
-        ]);
-
-        // Menyimpan barang baru
-        Barang::create([
-            'nama_barang' => $request->nama_barang,
-            'jumlah_total' => $request->jumlah_total,
-            'jumlah_tersedia' => $request->jumlah_tersedia,
-        ]);
-
-        // Redirect ke halaman index dengan pesan sukses
-        return redirect()->route('barang.index')->with('success', 'Barang berhasil ditambahkan');
-    }
-
-    // Menampilkan form edit barang
+    // Menampilkan form untuk mengedit barang
     public function edit($id)
     {
         $barang = Barang::findOrFail($id);
-        return view('barang.edit', compact('barang'));
+        $kategoriBarangs = Category::all(); // Mengambil semua kategori barang
+        return view('barang.edit', compact('barang', 'kategoriBarangs'));
     }
 
-    // Update data barang
+    // Memperbarui data barang yang sudah ada
     public function update(Request $request, $id)
     {
-        $barang = Barang::findOrFail($id);
-
-        $request->validate([
-            'nama_barang' => 'sometimes|string|max:100',
-            'jumlah_total' => 'sometimes|integer|min:1',
-            'jumlah_tersedia' => 'sometimes|integer|min:0',
+        // Validasi input
+        $validated = $request->validate([
+            'nama_barang' => 'required|string|max:100',
+            'deskripsi_barang' => 'nullable|string',
+            'kategori_barang_id' => 'required|exists:kategori,id_kategori', // Perbaiki referensi ke tabel 'kategori'
+            'jumlah_total' => 'required|integer|min:1',
         ]);
 
-        $barang->update($request->all());
+        // Mencari barang yang akan diupdate
+        $barang = Barang::findOrFail($id);
 
-        return redirect()->route('barang.index')->with('success', 'Barang berhasil diperbarui');
+        // Memperbarui data barang
+        $barang->update([
+            'nama_barang' => $validated['nama_barang'],
+            'deskripsi_barang' => $validated['deskripsi_barang'],
+            'kategori_barang_id' => $validated['kategori_barang_id'], // Gunakan kategori_barang_id
+            'jumlah_total' => $validated['jumlah_total'],
+        ]);
+
+        // Redirect setelah berhasil mengupdate barang
+        return redirect()->route('barangs.index')->with('success', 'Barang berhasil diperbarui.');
     }
 
     // Menghapus barang
     public function destroy($id)
     {
         $barang = Barang::findOrFail($id);
-        $barang->delete();
+        $barang->delete(); // Menghapus barang
 
-        return redirect()->route('barang.index')->with('success', 'Barang berhasil dihapus');
+        // Redirect setelah berhasil menghapus barang
+        return redirect()->route('barangs.index')->with('success', 'Barang berhasil dihapus.');
     }
 }
+

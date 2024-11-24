@@ -5,21 +5,22 @@ namespace App\Http\Middleware;
 use Closure;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Symfony\Component\HttpFoundation\Response;
 
 class AdminMiddleware
 {
-    /**
-     * Handle an incoming request.
-     *
-     * @param  \Closure(\Illuminate\Http\Request): (\Symfony\Component\HttpFoundation\Response)  $next
-     */
-    public function handle(Request $request, Closure $next): Response
+    public function handle(Request $request, Closure $next)
     {
-        if (Auth::check() == false) {
-            return redirect('/');
+        // Pastikan user sudah login
+        if (!Auth::check()) {
+            return redirect()->route('login'); // Arahkan ke halaman login jika pengguna belum login
         }
 
-        return $next($request);
+        // Cek apakah user memiliki role_id 1 (admin)
+        if (Auth::user()->role_id != 1) {
+            return abort(403, 'Unauthorized action.'); // Jika bukan admin, tampilkan error 403
+        }
+
+        return $next($request); // Lanjutkan ke request berikutnya
     }
 }
+

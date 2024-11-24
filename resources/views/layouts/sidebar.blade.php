@@ -1,21 +1,17 @@
 <nav class="sidebar sidebar-offcanvas" id="sidebar">
-  <ul class="nav">
-    <li class="nav-item">
-      <a class="nav-link" href="/dashboard">
-        <i class="icon-grid menu-icon"></i>
-        <span class="menu-title">Dashboard</span>
-      </a>
-    </li>
-    <li class="nav-item">
+    <ul class="nav">
+      <li class="nav-item">
+        <a class="nav-link" href="/dashboard">
+          <i class="icon-grid menu-icon"></i>
+          <span class="menu-title">Dashboard</span>
+        </a>
+      </li>
+
+      @if(Auth::user()->role_id == 1) <!-- Admin -->
+      <li class="nav-item">
         <a class="nav-link" href="/roles">
           <i class="icon-grid menu-icon"></i>
           <span class="menu-title">Role</span>
-        </a>
-      </li>
-      <li class="nav-item">
-        <a class="nav-link" href="/barang">
-          <i class="icon-grid menu-icon"></i>
-          <span class="menu-title">Barang</span>
         </a>
       </li>
       <li class="nav-item">
@@ -25,17 +21,46 @@
         </a>
       </li>
       <li class="nav-item">
-        <a class="nav-link collapsed" data-bs-toggle="collapse" href="#penerimaan" aria-expanded="false" aria-controls="penerimaan">
-            <i class="icon-layout menu-icon"></i>
-            <span class="menu-title">Menu</span>
-            <i class="menu-arrow"></i>
+        <a class="nav-link" href="/kategori">
+          <i class="icon-grid menu-icon"></i>
+          <span class="menu-title">Kategori Barang</span>
         </a>
-        <div class="collapse" id="penerimaan">
-            <ul class="nav flex-column sub-menu">
-                <li class="nav-item"> <a class="nav-link" href="/menus">Master Menu</a></li>
-                <li class="nav-item"> <a class="nav-link" href="/detailpenerimaan">Kelola Akses Menu</a></li>
-            </ul>
-        </div>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="/barangs">
+          <i class="icon-grid menu-icon"></i>
+          <span class="menu-title">Master Barang</span>
+        </a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="/menus">
+          <i class="icon-grid menu-icon"></i>
+          <span class="menu-title">Master Menu</span>
+        </a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="/detailpenerimaan">
+          <i class="icon-grid menu-icon"></i>
+          <span class="menu-title">Kelola Akses Menu</span>
+        </a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="/admin/peminjaman">
+            <i class="icon-grid menu-icon"></i>
+            <span class="menu-title">Manajemen Peminjaman</span>
+        </a>
     </li>
-  </ul>
-</nav>
+      @endif
+
+      @if(Auth::user()->role_id == 2) <!-- User -->
+      <li class="nav-item">
+          <a class="nav-link" href="/peminjaman">
+              <i class="icon-grid menu-icon"></i>
+              <span class="menu-title">Peminjaman</span>
+          </a>
+      </li>
+  @endif
+
+
+    </ul>
+  </nav>

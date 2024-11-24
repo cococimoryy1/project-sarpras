@@ -7,21 +7,22 @@ use Illuminate\Database\Eloquent\Model;
 
 class Barang extends Model
 {
-    use HasFactory;
-
-    protected $table = 'barang';
-    protected $primaryKey = 'barang_id';
-
+    protected $table = 'barangs'; // Nama tabel barang
+    protected $primaryKey = 'barang_id'; // Primary key untuk barang
     protected $fillable = [
         'nama_barang',
         'deskripsi_barang',
-        'kategori_barang',
-        'status_barang',
+        'kategori_barang_id', // Ensure this is filled as well
         'jumlah_total',
-        'jumlah_tersedia',
     ];
 
-
-
-
+    // Relasi dengan kategori
+    public function kategori()
+    {
+        return $this->belongsTo(Category::class, 'kategori_barang_id', 'id_kategori');
+    }
+    public function ketersediaan()
+    {
+        return $this->hasMany(KetersediaanBarang::class, 'barang_id');
+    }
 }

@@ -8,13 +8,13 @@
                     <div class="card position-relative">
                         <div class="card-body">
                             <div class="col-12 col-xl-8 mb-4 mb-xl-0">
-                                <h3 class="font-weight-bold">Tambahkan Kategori Buku</h3>
+                                <h3 class="font-weight-bold">Tambahkan Kategori Barang</h3>
                             </div>
                             <form method="post" class="forms-sample" action="/addkategori">
                                 @csrf
                                 <div class="form-group">
                                     <label for="nama_kategori">Nama Kategori</label>
-                                    <input type="text" class="form-control" id="nama_kategori" name="nama_kategori" placeholder="ex : Komedi">
+                                    <input type="text" class="form-control" id="nama_kategori" name="nama_kategori" placeholder="ex : Alat Tulis, Komputer, dll">
                                 </div>
                                 <button type="submit" class="btn btn-primary me-2">Submit</button>
                                 <button class="btn btn-light">Cancel</button>
@@ -27,7 +27,7 @@
                 <div class="col-md-12 grid-margin stretch-card">
                     <div class="card">
                         <div class="card-body">
-                            <p class="card-title">Daftar Kategori</p>
+                            <p class="card-title">Daftar Kategori Barang</p>
                             <div class="row">
                                 <div class="col-12">
                                     <div class="table-responsive">
@@ -48,7 +48,7 @@
                                                     </tr>
                                                 @endforeach
                                             </tbody>
-                                        </table>                                        
+                                        </table>
                                     </div>
                                 </div>
                             </div>
@@ -58,5 +58,4 @@
             </div>
         </div>
     </div>
-</div>
 @endsection

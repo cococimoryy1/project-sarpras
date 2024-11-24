@@ -1,38 +1,39 @@
 @extends('layouts.main')
 
 @section('content')
-<div class="container-fluid">
+<div class="container">
     <h1>Tambah Barang</h1>
 
-    <!-- Menampilkan pesan sukses atau error -->
-    @if (session('success'))
-        <div class="alert alert-success">{{ session('success') }}</div>
-    @endif
-    @if (session('error'))
-        <div class="alert alert-danger">{{ session('error') }}</div>
-    @endif
+    <form action="{{ route('barangs.store') }}" method="POST">
+        @csrf
 
-    <!-- Form Input Barang -->
-    <div class="card mb-4">
-        <div class="card-header">Tambah Barang</div>
-        <div class="card-body">
-            <form action="{{ route('barang.store') }}" method="POST">
-                @csrf
-                <div class="form-group">
-                    <label for="nama_barang">Nama Barang:</label>
-                    <input type="text" id="nama_barang" name="nama_barang" class="form-control" placeholder="Masukkan nama barang" required>
-                </div>
-                <div class="form-group">
-                    <label for="jumlah_total">Jumlah Total:</label>
-                    <input type="number" id="jumlah_total" name="jumlah_total" class="form-control" placeholder="Masukkan jumlah total barang" required>
-                </div>
-                <div class="form-group">
-                    <label for="jumlah_tersedia">Jumlah Tersedia:</label>
-                    <input type="number" id="jumlah_tersedia" name="jumlah_tersedia" class="form-control" placeholder="Masukkan jumlah barang yang tersedia" required>
-                </div>
-                <button type="submit" class="btn btn-primary">Simpan</button>
-            </form>
+        <div class="mb-3">
+            <label for="nama_barang" class="form-label">Nama Barang</label>
+            <input type="text" class="form-control" id="nama_barang" name="nama_barang" required>
         </div>
-    </div>
+
+        <div class="mb-3">
+            <label for="deskripsi_barang" class="form-label">Deskripsi Barang</label>
+            <textarea class="form-control" id="deskripsi_barang" name="deskripsi_barang"></textarea>
+        </div>
+
+        <div class="mb-3">
+            <label for="kategori_barang" class="form-label">Kategori Barang</label>
+            <select class="form-control" id="kategori_barang" name="kategori_barang_id" required>
+                <option value="">Pilih Kategori</option>
+                @foreach($kategoriBarangs as $kategori)
+                    <option value="{{ $kategori->id_kategori }}">{{ $kategori->nama_kategori }}</option>
+                @endforeach
+            </select>
+
+        </div>
+
+        <div class="mb-3">
+            <label for="jumlah_total" class="form-label">Jumlah Total</label>
+            <input type="number" class="form-control" id="jumlah_total" name="jumlah_total" required>
+        </div>
+
+        <button type="submit" class="btn btn-primary">Simpan</button>
+    </form>
 </div>
 @endsection
