@@ -3,28 +3,30 @@
 namespace App\Http\Controllers;
 
 use App\Models\Barang;
+use App\Models\KetersediaanBarang;
 use App\Models\Peminjaman;
 use App\Models\PeminjamanDetail;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Carbon\Carbon;
 
 class PeminjamanController extends Controller
 {
     public function index()
     {
-        // Menampilkan daftar barang yang tersedia untuk dipinjam
-        $barangs = Barang::where('status', 'tersedia')->get();
+        // Ambil data barang dengan relasi kategori dan ketersediaan
+        $barangs = Barang::with('kategori', 'ketersediaan')->get();
 
-        // Jika admin, tampilkan juga daftar peminjaman untuk persetujuan
+        // Ambil daftar peminjaman jika user adalah admin
         $peminjamanList = [];
         if (Auth::user()->role_id == 1) {
-            $peminjamanList = Peminjaman::with(['user', 'details.barang'])
-                ->where('status_peminjaman', 'pending')
-                ->get();
+            $peminjamanList = Peminjaman::with(['user', 'details.barang'])->where('status_peminjaman', 'pending')->get();
         }
 
         return view('peminjaman.index', compact('barangs', 'peminjamanList'));
     }
+
+
 
     public function store(Request $request)
     {
@@ -36,12 +38,18 @@ class PeminjamanController extends Controller
             'tanggal_kembali' => 'required|date|after:tanggal_pinjam',
         ]);
 
+        // Hitung total hari berdasarkan tanggal_pinjam dan tanggal_kembali
+        $tanggal_pinjam = Carbon::parse($request->tanggal_pinjam);
+        $tanggal_kembali = Carbon::parse($request->tanggal_kembali);
+        $total_hari = $tanggal_pinjam->diffInDays($tanggal_kembali);
+
         // Membuat transaksi peminjaman
         $peminjaman = Peminjaman::create([
             'user_id' => Auth::id(),
             'tanggal_pinjam' => $request->tanggal_pinjam,
             'tanggal_kembali' => $request->tanggal_kembali,
-            'status_peminjaman' => 'dipinjam',  // Pastikan status adalah 'dipinjam'
+            'status_peminjaman' => 'pending', // Status awal adalah pending
+            'total_hari' => $total_hari,
         ]);
 
         // Menambahkan detail peminjaman
@@ -51,44 +59,93 @@ class PeminjamanController extends Controller
             'jumlah_barang' => $request->jumlah_barang,
         ]);
 
-        // Update jumlah barang yang tersedia
-        $barang = Barang::findOrFail($request->barang_id);
-        $barang->jumlah_tersedia -= $request->jumlah_barang;
-        $barang->save();
-
-        return redirect()->route('peminjaman.index')->with('success', 'Peminjaman berhasil diajukan.');
+        return redirect()->route('peminjaman.index')->with('success', 'Peminjaman berhasil diajukan dan menunggu persetujuan.');
     }
 
 
     public function accPeminjaman($id)
     {
-        $peminjaman = Peminjaman::findOrFail($id);
+        $peminjaman = Peminjaman::with('details')->findOrFail($id);
 
-        // Cek apakah pengguna adalah admin
         if (Auth::user()->role_id == 1) {
-            // Update status peminjaman
-            $peminjaman->status_peminjaman = 'dipinjam'; // Setujui peminjaman
+            // Pastikan statusnya masih pending
+            if ($peminjaman->status_peminjaman != 'pending') {
+                return redirect()->route('peminjaman.index')->with('error', 'Peminjaman sudah diproses sebelumnya.');
+            }
+
+            // Kurangi jumlah barang di tabel ketersediaan_barang
+            foreach ($peminjaman->details as $detail) {
+                $ketersediaan = KetersediaanBarang::where('barang_id', $detail->barang_id)->first();
+
+                if ($ketersediaan && $ketersediaan->jumlah_tersedia >= $detail->jumlah_barang) {
+                    $ketersediaan->jumlah_tersedia -= $detail->jumlah_barang;
+                    $ketersediaan->tanggal_terakhir_update = now();
+                    $ketersediaan->save();
+                } else {
+                    return redirect()->route('peminjaman.index')->with('error', 'Stok barang tidak mencukupi.');
+                }
+            }
+
+            // Update status peminjaman menjadi 'dipinjam'
+            $peminjaman->status_peminjaman = 'dipinjam';
             $peminjaman->save();
 
-            return redirect()->route('peminjaman.index')->with('success', 'Peminjaman disetujui.');
+            return redirect()->route('peminjaman.index')->with('success', 'Peminjaman berhasil disetujui.');
         }
 
         return redirect()->route('peminjaman.index')->with('error', 'Hanya admin yang bisa menyetujui peminjaman.');
     }
 
+
+
     public function tolakPeminjaman($id)
     {
-        $peminjaman = Peminjaman::findOrFail($id);
+        $peminjaman = Peminjaman::with('details')->findOrFail($id);
 
-        // Cek apakah pengguna adalah admin
         if (Auth::user()->role_id == 1) {
-            // Update status peminjaman
-            $peminjaman->status_peminjaman = 'dibatalkan'; // Tolak peminjaman
+            if ($peminjaman->status_peminjaman != 'pending') {
+                return redirect()->route('peminjaman.index')->with('error', 'Peminjaman ini sudah diproses.');
+            }
+
+            // Update status peminjaman menjadi 'dibatalkan'
+            $peminjaman->status_peminjaman = 'dibatalkan';
             $peminjaman->save();
 
-            return redirect()->route('peminjaman.index')->with('success', 'Peminjaman ditolak.');
+            return redirect()->route('peminjaman.index')->with('success', 'Peminjaman berhasil ditolak.');
         }
 
         return redirect()->route('peminjaman.index')->with('error', 'Hanya admin yang bisa menolak peminjaman.');
     }
+
+    public function return(Request $request, $id)
+{
+    $peminjaman = Peminjaman::with('details')->findOrFail($id);
+
+    // Pastikan hanya admin yang bisa memproses pengembalian
+    if (Auth::user()->role_id != 1) {
+        return redirect()->route('peminjaman.index')->with('error', 'Hanya admin yang dapat memproses pengembalian.');
+    }
+
+    // Pastikan status peminjaman adalah "dipinjam"
+    if ($peminjaman->status_peminjaman != 'dipinjam') {
+        return redirect()->route('peminjaman.index')->with('error', 'Peminjaman ini tidak dalam status dipinjam.');
+    }
+
+    // Update stok barang
+    foreach ($peminjaman->details as $detail) {
+        $ketersediaan = KetersediaanBarang::where('barang_id', $detail->barang_id)->first();
+
+        if ($ketersediaan) {
+            $ketersediaan->jumlah_tersedia += $detail->jumlah_barang;
+            $ketersediaan->tanggal_terakhir_update = now();
+            $ketersediaan->save();
+        }
+    }
+
+    // Tandai peminjaman sebagai selesai
+    $peminjaman->markAsReturned(now());
+
+    return redirect()->route('peminjaman.index')->with('success', 'Barang berhasil dikembalikan.');
+}
+
 }

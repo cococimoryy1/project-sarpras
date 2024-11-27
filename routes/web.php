@@ -14,6 +14,7 @@ use App\Http\Middleware\GuestMiddleware;
 use App\Http\Middleware\AdminMiddleware;
 use App\Http\Controllers\PeminjamanController;
 use App\Http\Controllers\AdminController;
+use App\Http\Controllers\PengembalianController;
 
 // Route untuk login dan registrasi (untuk guest)
 Route::middleware(GuestMiddleware::class)->group(function () {
@@ -27,9 +28,13 @@ Route::middleware(GuestMiddleware::class)->group(function () {
 // Route untuk logout (untuk semua pengguna yang sudah login)
 Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
 
+
+Route::middleware(['auth'])->group(function () {
+    Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+});
 // Route untuk dashboard dan manajemen admin (hanya untuk admin)
 Route::middleware([AdminMiddleware::class])->group(function () {
-    Route::get('/dashboard', [DashboardController::class, 'index']);
+    // Route::get('/dashboard', [DashboardController::class, 'index']);
 
     // Buku Management
     Route::get('/buku', [BukuController::class, 'index']);
@@ -72,8 +77,19 @@ Route::middleware([AdminMiddleware::class])->group(function () {
 // Route untuk user melakukan peminjaman (hanya untuk user)
 Route::middleware('auth')->group(function () {
     Route::get('/peminjaman', [PeminjamanController::class, 'index'])->name('peminjaman.index');
-    Route::post('/peminjaman', [PeminjamanController::class, 'store'])->name('peminjaman.store');
+    Route::post('/peminjaman/store', [PeminjamanController::class, 'store'])->name('peminjaman.store');
+    Route::post('/peminjaman/{id}/approve', [PeminjamanController::class, 'accPeminjaman'])->name('peminjaman.approve');
+    Route::delete('/peminjaman/{id}/reject', [PeminjamanController::class, 'tolakPeminjaman'])->name('peminjaman.reject');
+    Route::post('/peminjaman/{id}/return', [PeminjamanController::class, 'return'])->name('peminjaman.return');
+
+
+    // Route untuk pengembalian
+
+// Route untuk pengembalian
+Route::get('/pengembalian', [PengembalianController::class, 'index'])->name('pengembalian.index');
+Route::patch('/pengembalian/{id}', [PengembalianController::class, 'prosesPengembalian'])->name('pengembalian.proses');
 });
+
 
 // Route untuk resource Barang (hanya untuk admin atau sesuai dengan kebutuhan)
 Route::resource('barangs', BarangController::class)->middleware(['auth']); // Bisa ditambahkan middleware yang sesuai

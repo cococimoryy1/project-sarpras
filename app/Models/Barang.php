@@ -23,6 +23,6 @@ class Barang extends Model
     }
     public function ketersediaan()
     {
-        return $this->hasMany(KetersediaanBarang::class, 'barang_id');
+        return $this->hasOne(KetersediaanBarang::class, 'barang_id', 'barang_id');
     }
 }

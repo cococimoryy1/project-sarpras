@@ -42,4 +42,16 @@ class Peminjaman extends Model
     {
         return $this->hasMany(PeminjamanDetail::class, 'peminjaman_id');
     }
+    public function details()
+{
+    return $this->hasMany(PeminjamanDetail::class, 'peminjaman_id');
+}
+public function markAsReturned($tanggalKembali)
+{
+    $this->tanggal_kembali_sebenarnya = $tanggalKembali;
+    $this->status_peminjaman = 'selesai';
+    $this->save();
+}
+
+
 }

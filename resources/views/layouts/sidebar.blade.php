@@ -45,9 +45,15 @@
         </a>
       </li>
       <li class="nav-item">
-        <a class="nav-link" href="/admin/peminjaman">
+        <a class="nav-link" href="/peminjaman">
             <i class="icon-grid menu-icon"></i>
             <span class="menu-title">Manajemen Peminjaman</span>
+        </a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" href="/pengembalian">
+            <i class="icon-grid menu-icon"></i>
+            <span class="menu-title">Manajemen Pengembalian</span>
         </a>
     </li>
       @endif
@@ -59,6 +65,12 @@
               <span class="menu-title">Peminjaman</span>
           </a>
       </li>
+      <li class="nav-item">
+        <a class="nav-link" href="/pengembalian">
+            <i class="icon-grid menu-icon"></i>
+            <span class="menu-title">Pengembalian</span>
+        </a>
+    </li>
   @endif
 
 

@@ -24,8 +24,8 @@ class KetersediaanBarang extends Model
     ];
 
     // Relasi dengan model Barang
-    public function barang(): BelongsTo
+    public function barang()
     {
-        return $this->belongsTo(Barang::class, 'barang_id');
+        return $this->belongsTo(Barang::class, 'barang_id', 'barang_id');
     }
 }
