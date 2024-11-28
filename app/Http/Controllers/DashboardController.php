@@ -13,5 +13,13 @@ class DashboardController extends Controller
             return view('dashboard');
 
     }
+    // app/Http/Controllers/DashboardController.php
+
+public function showDashboard()
+{
+    $menus = (new MenuController())->getAccessibleMenus(); // Mendapatkan menu yang bisa diakses
+    return view('dashboard', compact('menus'));
+}
+
 }
 

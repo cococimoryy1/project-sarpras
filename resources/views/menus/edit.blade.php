@@ -16,7 +16,12 @@
                 <label for="deskripsi_menu">Deskripsi Menu</label>
                 <textarea id="deskripsi_menu" name="deskripsi_menu" class="form-control">{{ $menu->deskripsi_menu }}</textarea>
             </div>
+            <div class="form-group">
+                <label for="link">Link Menu</label>
+                <input type="text" id="link" name="link" class="form-control" value="{{ $menu->link }}">
+            </div>
             <button type="submit" class="btn btn-primary">Simpan Perubahan</button>
         </form>
+
     </div>
 @endsection

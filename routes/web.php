@@ -14,6 +14,7 @@ use App\Http\Middleware\GuestMiddleware;
 use App\Http\Middleware\AdminMiddleware;
 use App\Http\Controllers\PeminjamanController;
 use App\Http\Controllers\AdminController;
+use App\Http\Controllers\AksesController;
 use App\Http\Controllers\PengembalianController;
 
 // Route untuk login dan registrasi (untuk guest)
@@ -84,10 +85,18 @@ Route::middleware('auth')->group(function () {
 
 
     // Route untuk pengembalian
-
-// Route untuk pengembalian
+// Untuk melihat daftar peminjaman/pengembalian
 Route::get('/pengembalian', [PengembalianController::class, 'index'])->name('pengembalian.index');
-Route::patch('/pengembalian/{id}', [PengembalianController::class, 'prosesPengembalian'])->name('pengembalian.proses');
+
+// Untuk user mengajukan pengembalian
+Route::post('/pengembalian/{peminjaman_id}', [PengembalianController::class, 'store'])->name('pengembalian.store');
+
+// Untuk admin menyetujui pengembalian
+Route::post('/pengembalian/approve/{peminjaman_id}', [PengembalianController::class, 'accPengembalian'])->name('pengembalian.acc');
+
+Route::get('menus/{menu}/akses', [AksesController::class, 'create'])->name('akses.create');
+Route::post('menus/{menu}/akses', [AksesController::class, 'store'])->name('akses.store');
+
 });
 
 

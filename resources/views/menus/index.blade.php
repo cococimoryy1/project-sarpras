@@ -18,17 +18,22 @@
                     <th>No</th>
                     <th>Nama Menu</th>
                     <th>Deskripsi</th>
+                    <th>Link</th> <!-- Menambahkan kolom Link -->
                     <th>Aksi</th>
                 </tr>
             </thead>
             <tbody>
+                <!-- resources/views/menus/index.blade.php -->
+
                 @foreach($menus as $menu)
                     <tr>
                         <td>{{ $loop->iteration }}</td>
                         <td>{{ $menu->nama_menu }}</td>
                         <td>{{ $menu->deskripsi_menu }}</td>
+                        <td><a href="{{ $menu->link }}" target="_blank">{{ $menu->link }}</a></td>
                         <td>
                             <a href="{{ route('menus.edit', $menu->id) }}" class="btn btn-warning">Edit</a>
+                            <a href="{{ route('akses.create', $menu->id) }}" class="btn btn-info">Atur Akses</a>
                             <form action="{{ route('menus.destroy', $menu->id) }}" method="POST" style="display:inline;">
                                 @csrf
                                 @method('DELETE')
@@ -37,7 +42,9 @@
                         </td>
                     </tr>
                 @endforeach
+
             </tbody>
         </table>
+
     </div>
 @endsection

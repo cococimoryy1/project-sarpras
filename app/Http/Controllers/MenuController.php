@@ -63,4 +63,23 @@ class MenuController extends Controller
        $menu->delete();
        return redirect()->route('menus.index')->with('success', 'Menu berhasil dihapus!');
    }
+   public function getMenusForUser()
+   {
+       $userRole = auth()->user()->role_id;
+
+       // Pastikan role_id ada dan valid
+       if ($userRole) {
+           $menus = Menu::whereHas('akses', function ($query) use ($userRole) {
+               $query->where('role_id', $userRole); // Filter menu berdasarkan role_id
+           })->get();
+
+           return view('menus.index', compact('menus'));
+       }
+
+       // Jika tidak ada role_id
+       return redirect()->route('home')->with('error', 'Role pengguna tidak ditemukan!');
+   }
+
+
+
 }

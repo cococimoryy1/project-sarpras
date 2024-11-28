@@ -16,7 +16,7 @@ return new class extends Migration
             $table->unsignedBigInteger('user_id');  // Foreign key ke tabel users
             $table->date('tanggal_pinjam');  // Tanggal peminjaman
             $table->date('tanggal_kembali')->nullable();  // Tanggal pengembalian (opsional)
-            $table->enum('status_peminjaman', ['dipinjam','pending', 'selesai', 'dibatalkan'])->default('dipinjam');  // Status peminjaman
+            $table->enum('status_peminjaman', ['dipinjam', 'pending', 'selesai', 'dibatalkan', 'menunggu pengembalian'])->default('dipinjam');
             $table->integer('total_hari')->nullable();  // Total hari peminjaman (opsional)
             $table->timestamps();  // Kolom created_at dan updated_at
 

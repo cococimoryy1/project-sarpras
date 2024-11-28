@@ -15,7 +15,12 @@
                 <label for="deskripsi_menu">Deskripsi Menu</label>
                 <textarea id="deskripsi_menu" name="deskripsi_menu" class="form-control"></textarea>
             </div>
+            <div class="form-group">
+                <label for="link">Link Menu</label>
+                <input type="text" id="link" name="link" class="form-control">
+            </div>
             <button type="submit" class="btn btn-primary">Simpan</button>
         </form>
+
     </div>
 @endsection
