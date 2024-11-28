@@ -22,7 +22,7 @@ Route::middleware(GuestMiddleware::class)->group(function () {
     Route::get('/', [LoginController::class, 'index']);
     Route::post('/authenticate', [LoginController::class, 'authenticate'])->name('login');
     // Registrasi
-    Route::get('/register', [RegisterController::class, 'showRegistrationForm'])->name('register');
+    Route::get('/register', [RegisterController::class, 'index'])->name('register');
     Route::post('/proses-register', [RegisterController::class, 'register'])->name('register.post');
 });
 
