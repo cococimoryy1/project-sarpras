@@ -15,10 +15,21 @@ class DashboardController extends Controller
     }
     // app/Http/Controllers/DashboardController.php
 
-public function showDashboard()
+// public function showDashboard()
+// {
+//     $menus = (new MenuController())->getAccessibleMenus(); // Mendapatkan menu yang bisa diakses
+//     return view('dashboard', compact('menus'));
+// }
+
+public function getWeather()
 {
-    $menus = (new MenuController())->getAccessibleMenus(); // Mendapatkan menu yang bisa diakses
-    return view('dashboard', compact('menus'));
+    $url = "https://data.bmkg.go.id/DataMKG/MEWS/DigitalForecast/DigitalForecast-JawaTimur.xml";
+
+    $client = new \GuzzleHttp\Client();
+    $response = $client->get($url);
+
+    return response($response->getBody(), 200)
+        ->header('Content-Type', 'application/xml');
 }
 
 }
