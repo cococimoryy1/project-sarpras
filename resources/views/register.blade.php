@@ -166,7 +166,8 @@
                 <img src="{{ asset('assets/images/logo_project.jpg') }}" alt="Logo Project">
                 <h2>Registrasi Akun Baru</h2>
                 <p>Masukkan data Anda untuk membuat akun baru</p>
-                <form action="{{ route('register') }}" method="post">
+                <form action="{{ route('register.post') }}" method="post">
+
                     @csrf
                     <div class="form-group">
                         <label for="username">Username</label>

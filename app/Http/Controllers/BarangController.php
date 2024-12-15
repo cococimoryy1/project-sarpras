@@ -74,10 +74,18 @@ class BarangController extends Controller
     // Menampilkan form untuk mengedit barang
     public function edit($id)
     {
+        // Ambil data barang berdasarkan id
         $barang = Barang::findOrFail($id);
-        $kategoriBarangs = Category::all(); // Mengambil semua kategori barang
+
+        // Ambil semua kategori dari model Category
+        $kategoriBarangs = Category::all();
+
+        // Kirim data ke view
         return view('barang.edit', compact('barang', 'kategoriBarangs'));
     }
+
+
+
 
     // Memperbarui data barang yang sudah ada
     public function update(Request $request, $id)
@@ -114,5 +122,19 @@ class BarangController extends Controller
         // Redirect setelah berhasil menghapus barang
         return redirect()->route('barangs.index')->with('success', 'Barang berhasil dihapus.');
     }
+
+    public function tersedia()
+    {
+        // Ambil data barang yang memiliki jumlah_tersedia > 0 melalui relasi ketersediaan_barang
+        $barangList = Barang::with('ketersediaan') // Pastikan ada relasi 'ketersediaan' di model Barang
+            ->whereHas('ketersediaan', function ($query) {
+                $query->where('jumlah_tersedia', '>', 0);
+            })
+            ->get();
+
+        // Tampilkan view dengan data barang
+        return view('barang.tersedia', compact('barangList'));
+    }
+
 }
 

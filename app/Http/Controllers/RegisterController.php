@@ -16,19 +16,24 @@ class RegisterController extends Controller
 
     public function store(Request $request): RedirectResponse
     {
-    $validatedData = $request->validate([
-        'email' => 'required|max:200|email:dns',
-        'username' => ['required','min:5','max:60'],
-        'password' => 'required|min:5'
-    ]);
+        // Validasi input dari form
+        $validatedData = $request->validate([
+            'email' => 'required|max:200|email:dns',
+            'username' => ['required', 'min:5', 'max:60'],
+            'password' => 'required|min:5|confirmed', // Gunakan validasi confirmed untuk password
+        ]);
 
-    $validatedData['password']=Hash::make($validatedData['password']);
+        // Enkripsi password
+        $validatedData['password'] = Hash::make($validatedData['password']);
 
-    $user = User::create($validatedData);
-    $id_user = $user->id_user;
+        // Tambahkan role_id secara default (misalnya, 2 untuk "user biasa")
+        $validatedData['role_id'] = 2;
 
-    return redirect ('/login')->with('success', 'Registration Successful! Please Login');
+        // Simpan data user ke database
+        $user = User::create($validatedData);
 
-
+        // Redirect ke halaman login dengan pesan sukses
+        return redirect('/')->with('success', 'Registration Successful! Please Login');
     }
+
 }

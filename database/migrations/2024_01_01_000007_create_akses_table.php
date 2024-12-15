@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id('akses_id'); // Primary key
             $table->unsignedBigInteger('role_id'); // Foreign key ke tabel roles
             $table->unsignedBigInteger('menu_id'); // Foreign key ke tabel menus
-            $table->enum('hak_akses', ['lihat', 'tambah', 'ubah', 'hapus']); // Hak akses
+            $table->set('hak_akses', ['lihat', 'tambah', 'ubah', 'hapus']); // Hak akses (beberapa hak akses per baris)
             $table->timestamps(); // Kolom created_at dan updated_at
 
             // Foreign key constraints

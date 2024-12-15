@@ -1,5 +1,3 @@
-<!-- resources/views/menus/create.blade.php -->
-
 @extends('layouts.main')
 
 @section('content')
@@ -19,8 +17,16 @@
                 <label for="link">Link Menu</label>
                 <input type="text" id="link" name="link" class="form-control">
             </div>
+            <div class="form-group">
+                <label for="parent_id">Parent Menu</label>
+                <select id="parent_id" name="parent_id" class="form-control">
+                    <option value="">Tidak Ada</option>
+                    @foreach($parentMenus as $parentMenu)
+                        <option value="{{ $parentMenu->id }}">{{ $parentMenu->nama_menu }}</option>
+                    @endforeach
+                </select>
+            </div>
             <button type="submit" class="btn btn-primary">Simpan</button>
         </form>
-
     </div>
 @endsection

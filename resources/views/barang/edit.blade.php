@@ -21,14 +21,14 @@
         <div class="mb-3">
             <label for="kategori_barang" class="form-label">Kategori Barang</label>
             <select class="form-control" id="kategori_barang" name="kategori_barang_id" required>
-                <option value="">Pilih Kategori</option>
+                <option value="" disabled @if(!$barang->kategori_barang_id) selected @endif>Pilih Kategori</option>
                 @foreach($kategoriBarangs as $kategori)
-                    <option value="{{ $kategori->kategori_id }}"
-                        @if($barang->kategori_barang_id == $kategori->kategori_id) selected @endif>
-                        {{ $kategori->kategori_name }}
+                    <option value="{{ $kategori->id_kategori }}" @if($barang->kategori_barang_id == $kategori->id_kategori) selected @endif>
+                        {{ $kategori->nama_kategori }}
                     </option>
                 @endforeach
             </select>
+
         </div>
 
         <div class="mb-3">

@@ -4,29 +4,30 @@
 <div class="container">
     <!-- Tampilkan untuk User -->
     @if(Auth::user()->role_id == 2)
-        <h2 class="mb-4">Daftar Barang yang Tersedia</h2>
+    <h2 class="mb-4">Ajukan Peminjaman</h2>
 
-        @if(session('success'))
-            <div class="alert alert-success">{{ session('success') }}</div>
-        @endif
+    @if(session('success'))
+        <div class="alert alert-success">{{ session('success') }}</div>
+    @endif
 
-        <div class="table-responsive">
-            <table class="table table-striped table-bordered">
-                <thead>
+    <!-- Daftar Barang yang Tersedia untuk Dipinjam -->
+    <div class="table-responsive">
+        <table class="table table-striped table-bordered">
+            <thead>
+                <tr>
+                    <th>Nama Barang</th>
+                    <th>Kategori</th>
+                    <th>Jumlah Tersedia</th>
+                    <th>Aksi</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach($barangs as $barang)
                     <tr>
-                        <th>Nama Barang</th>
-                        <th>Kategori</th>
-                        <th>Jumlah Tersedia</th>
-                        <th>Aksi</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach($barangs as $barang)
-                        <tr>
-                            <td>{{ $barang->nama_barang }}</td>
-                            <td>{{ $barang->kategori->nama_kategori }}</td>
-                            <td>{{ $barang->ketersediaan ? $barang->ketersediaan->jumlah_tersedia : 'Tidak tersedia' }}</td>
-                            <td>
+                        <td>{{ $barang->nama_barang }}</td>
+                        <td>{{ $barang->kategori->nama_kategori }}</td>
+                        <td>{{ $barang->ketersediaan ? $barang->ketersediaan->jumlah_tersedia : 'Tidak tersedia' }}</td>
+                        <td>
                             <a href="#" class="btn btn-primary" data-toggle="modal" data-target="#pinjamModal{{ $barang->barang_id }}">Pinjam</a>
 
                             <!-- Modal Form Peminjaman -->
@@ -66,12 +67,39 @@
                             </div>
                         </td>
                     </tr>
-                    @endforeach
-                </tbody>
-            </table>
-        </div>
-    @endif
+                @endforeach
+            </tbody>
+        </table>
+    </div>
 
+    <!-- Daftar Peminjaman User -->
+    <h3 class="mt-5">Daftar Barang yang Dipinjam</h3>
+
+    @if($userPeminjamanList->isNotEmpty())
+        <table class="table table-striped table-bordered">
+            <thead>
+                <tr>
+                    <th>Nama Barang</th>
+                    <th>Jumlah</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach($userPeminjamanList as $peminjaman)
+                    @foreach($peminjaman->details as $detail)
+                        <tr>
+                            <td>{{ $detail->barang->nama_barang }}</td>
+                            <td>{{ $detail->jumlah_barang }}</td>
+                            <td>{{ $peminjaman->status_peminjaman }}</td>
+                        </tr>
+                    @endforeach
+                @endforeach
+            </tbody>
+        </table>
+    @else
+        <p>Tidak ada barang yang dipinjam atau belum disetujui.</p>
+    @endif
+@endif
     <!-- Tampilkan untuk Admin -->
     @if(Auth::user()->role_id == 1)
         <h2 class="mt-5">Daftar Peminjaman Menunggu Persetujuan</h2>

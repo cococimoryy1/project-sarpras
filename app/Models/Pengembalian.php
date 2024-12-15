@@ -19,9 +19,10 @@ class Pengembalian extends Model
     // Kolom yang dapat diisi secara massal
     protected $fillable = [
         'peminjaman_id',
+        'barang_id',
+        'jumlah_barang',
         'tanggal_kembali',
         'status_pengembalian',
-        'denda',
     ];
 
     // Relasi dengan model Peminjaman (BelongsTo)

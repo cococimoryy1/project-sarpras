@@ -16,32 +16,48 @@ class PengembalianController extends Controller
     public function index()
     {
         if (Auth::user()->role_id == 1) {
-            // Admin: Ambil semua pengembalian yang menunggu persetujuan
+            // Admin: Ambil semua pengembalian yang statusnya "dipinjam"
             $pengembalianList = Pengembalian::with(['peminjaman', 'peminjaman.details.barang', 'peminjaman.user'])
-                ->whereHas('peminjaman', function ($query) {
-                    $query->where('status_peminjaman', 'menunggu pengembalian');
-                })
-                ->get();
+            ->where('status_pengembalian', 'belum dikembalikan')
+            ->paginate(10);
+         // Pagination dengan 10 item per halaman
 
             return view('pengembalian.index', compact('pengembalianList'));
         } else {
-            // User: Ambil data peminjaman miliknya
+            // User: Ambil data peminjaman miliknya dengan status "dipinjam"
             $peminjamanList = Peminjaman::with(['details.barang'])
                 ->where('user_id', Auth::id())
-                ->get();
+                ->where('status_peminjaman', 'dipinjam')
+                ->paginate(10);
+
+            // Hitung denda untuk setiap peminjaman detail
+            foreach ($peminjamanList as $peminjaman) {
+                foreach ($peminjaman->details as $detail) {
+                    $hariTerlambat = now()->diffInDays($peminjaman->tanggal_kembali, false);
+                    $detail->denda = $hariTerlambat > 2 ? ($hariTerlambat - 2) * 10000 : 0;
+                }
+            }
 
             return view('pengembalian.index', compact('peminjamanList'));
         }
     }
 
 
+
     public function store(Request $request, $peminjaman_id)
     {
+        $peminjaman = Peminjaman::findOrFail($peminjaman_id);
         $peminjaman = Peminjaman::with('details')->findOrFail($peminjaman_id);
 
         // Pastikan status peminjaman adalah 'dipinjam'
         if ($peminjaman->status_peminjaman != 'dipinjam') {
             return redirect()->route('pengembalian.index')->with('error', 'Peminjaman ini tidak bisa dikembalikan.');
+        }
+
+        // Cek apakah sudah ada pengembalian yang diajukan
+        $existingPengembalian = Pengembalian::where('peminjaman_id', $peminjaman_id)->first();
+        if ($existingPengembalian) {
+            return redirect()->route('pengembalian.index')->with('error', 'Pengembalian sudah diajukan sebelumnya.');
         }
 
         // Hitung denda (jika ada keterlambatan)
@@ -63,7 +79,7 @@ class PengembalianController extends Controller
         ]);
 
         // Update status peminjaman menjadi 'menunggu pengembalian'
-        $peminjaman->status_peminjaman = 'menunggu pengembalian';
+        $peminjaman->status_peminjaman = 'pending';
         $peminjaman->save();
 
         return redirect()->route('pengembalian.index')->with('success', 'Pengembalian telah diajukan, menunggu persetujuan admin.');

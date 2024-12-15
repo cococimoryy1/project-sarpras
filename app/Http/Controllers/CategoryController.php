@@ -11,15 +11,15 @@ class CategoryController extends Controller
     public function index()
     {
         $kategori = Category::all();
-        $buku = Buku::all();
-        return view('menu.kategori', compact('buku', 'kategori'));
+
+        return view('menu.kategori', compact('kategori'));
     }
 
     public function add_kategori(Request $req){
         $kategori = new Category;
-      
+
         $kategori->nama_kategori = $req->post('nama_kategori');
-      
+
         $kategori->save();
         return redirect('/kategori');
        }

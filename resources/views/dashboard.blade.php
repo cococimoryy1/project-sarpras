@@ -5,7 +5,9 @@
 <div class="dashboard">
     <!-- Header -->
     <header class="header">
-        <h1>Selamat Datang di Sistem Peminjaman Barang</h1>
+        <div class="welcome-message">
+            <h1>Selamat Datang di Sistem Peminjaman Barang</h1>
+        </div>
         <div class="header-info">
             <div class="weather">
                 <img id="weather-icon" src="" alt="Cuaca" />
@@ -142,20 +144,35 @@
 
 <style>
     /* Header */
-    .header {
-        background-color: #3498db;
-        padding: 20px;
+        .header {
+        background-color: #83bbe1;
         color: white;
         text-align: center;
-        border-radius: 10px;
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        display: flex; /* Menggunakan Flexbox */
+        flex-direction: column; /* Elemen diatur secara vertikal */
+        align-items: center; /* Elemen berada di tengah horizontal */
+        justify-content: center; /* Elemen berada di tengah vertikal */
+        height: 180px; /* Tinggi header */
+        width: 100vw; /* Mengatur lebar header agar penuh (full layar) */
+        margin: 0; /* Menghapus jarak luar */
+        padding: 0; /* Menghapus padding default */
+        box-sizing: border-box; /* Memastikan padding masuk ke dalam elemen */
+        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3); /* Efek bayangan */
+    }
+
+    .welcome-message h1 {
+        font-size: 2.8em; /* Membuat teks lebih besar */
+        font-weight: bold; /* Menebalkan teks */
+        margin: 0;
+        color: n#ffffff;
     }
 
     .header-info {
+        margin-top: 20px;
         display: flex;
-        justify-content: space-between;
+        gap: 20px;
         align-items: center;
-        margin-top: 10px;
+        justify-content: center;
     }
 
     .weather img {
@@ -165,7 +182,10 @@
 
     .date {
         font-size: 16px;
+        color: #ffffff;
     }
+
+
 
     /* Katalog Barang */
     .catalog {

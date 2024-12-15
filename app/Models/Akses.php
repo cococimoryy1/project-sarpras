@@ -9,10 +9,11 @@ class Akses extends Model
 {
     use HasFactory;
 
-    // Nama tabel di database
     protected $table = 'akses';
+    // Menambahkan properti primaryKey
+    protected $primaryKey = 'akses_id'; // Ganti dengan nama kolom primary key yang sesuai
 
-    // Kolom yang bisa diisi
+
     protected $fillable = [
         'role_id',
         'menu_id',

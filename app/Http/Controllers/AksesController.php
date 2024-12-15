@@ -1,41 +1,52 @@
 <?php
 
 // app/Http/Controllers/AksesController.php
-
 namespace App\Http\Controllers;
 
 use App\Models\Akses;
-use App\Models\Role;
 use App\Models\Menu;
+use App\Models\Role;
 use Illuminate\Http\Request;
 
 class AksesController extends Controller
 {
-    // Menampilkan form untuk mengatur akses menu
-    public function create(Menu $menu)
+    // Menampilkan halaman kelola aksespublic function index()
+    public function index()
     {
-        // Ambil semua role yang ada
+        $akses = Akses::with('role', 'menu')->get(); // Ambil data akses dengan relasi
         $roles = Role::all();
+        $menus = Menu::all();
+        // dd($akses);
 
-        return view('akses.create', compact('menu', 'roles'));
+        return view('akses.index', compact('akses', 'roles', 'menus'));
     }
 
-    // Menyimpan pengaturan akses menu
-    public function store(Request $request, Menu $menu)
+
+
+
+    // Menyimpan pengaturan akses baru
+    public function store(Request $request)
     {
-        // Validasi input
         $request->validate([
-            'role_id' => 'required|exists:roles,id', // Validasi role yang dipilih
+            'role_id' => 'required|exists:roles,id', // Menggunakan 'id' bukan 'role_id'
+            'menu_id' => 'required|exists:menus,id', // Menggunakan 'id' bukan 'menu_id'
             'hak_akses' => 'required|in:lihat,tambah,ubah,hapus',
         ]);
 
-        // Menyimpan akses untuk menu
-        Akses::create([
-            'role_id' => $request->role_id,
-            'menu_id' => $menu->id,
-            'hak_akses' => $request->hak_akses,
-        ]);
+        Akses::create($request->all());
 
-        return redirect()->route('menus.index')->with('success', 'Akses menu berhasil diatur!');
+        return redirect()->route('akses.index')->with('success', 'Akses menu berhasil ditambahkan.');
     }
+
+
+    // Menghapus akses
+    public function destroy(Akses $akses)
+    {
+        $akses->delete();
+        return redirect()->route('akses.index')->with('success', 'Akses menu berhasil dihapus.');
+    }
+
+
 }
+
+
