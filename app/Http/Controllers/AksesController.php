@@ -16,6 +16,8 @@ class AksesController extends Controller
     {
         // Ambil semua role yang ada
         $roles = Role::all();
+                $roles = Role::all();
+
 
         return view('akses.create', compact('menu', 'roles'));
     }

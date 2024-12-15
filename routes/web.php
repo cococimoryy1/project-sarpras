@@ -16,6 +16,26 @@ use App\Http\Controllers\PeminjamanController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\AksesController;
 use App\Http\Controllers\PengembalianController;
+use App\Http\Controllers\ManajemenPeminjamanController;
+use App\Http\Controllers\ManajemenPengembalianController;
+
+Route::prefix('manajemen-peminjaman')->group(function () {
+    Route::get('/', [ManajemenPeminjamanController::class, 'index']);
+    Route::post('/{id}/terima', [ManajemenPeminjamanController::class, 'terima']);
+    Route::delete('/{id}/tolak', [ManajemenPeminjamanController::class, 'tolak']);
+});
+
+Route::prefix('manajemen-pengembalian')->group(function () {
+    Route::get('/', [ManajemenPengembalianController::class, 'index']);
+    Route::post('/{id}/setuju', [ManajemenPengembalianController::class, 'setuju']);
+});
+
+Route::get('/barang/create', [BarangController::class, 'create'])->name('barang.create');
+Route::post('/barang', [BarangController::class, 'store'])->name('barang.store');
+Route::get('/barang/{id}/edit', [BarangController::class, 'edit'])->name('barang.edit');
+Route::put('/barang/{id}', [BarangController::class, 'update'])->name('barang.update');
+Route::delete('/barang/{id}', [BarangController::class, 'destroy'])->name('barang.destroy');
+
 
 // Route untuk login dan registrasi (untuk guest)
 Route::middleware(GuestMiddleware::class)->group(function () {
