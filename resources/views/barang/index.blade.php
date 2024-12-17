@@ -26,7 +26,7 @@
                         <th>Nama Barang</th>
                         <th>Jumlah Total</th>
                         <th>Jumlah Tersedia</th>
-                        <th>Aksi</th> <!-- Kolom untuk tombol edit dan delete -->
+                        <th>Aksi</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -35,7 +35,13 @@
                             <td>{{ $barang->barang_id }}</td>
                             <td>{{ $barang->nama_barang }}</td>
                             <td>{{ $barang->jumlah_total }}</td>
-                            <td>{{ $barang->jumlah_tersedia }}</td>
+                            <td>
+                                @if($barang->ketersediaan) 
+                                    {{ $barang->ketersediaan->jumlah_tersedia }}
+                                @else
+                                    <span class="text-danger">Data Tidak Tersedia</span>
+                                @endif
+                            </td>
                             <td>
                                 <!-- Tombol Edit -->
                                 <a href="{{ route('barang.edit', $barang->barang_id) }}" class="btn btn-warning btn-sm">Edit</a>

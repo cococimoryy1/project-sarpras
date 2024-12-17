@@ -10,6 +10,7 @@ use Illuminate\Http\Request;
 
 class BarangController extends Controller
 {
+    
     // Menampilkan form untuk membuat barang baru
     public function create()
     {
@@ -67,6 +68,8 @@ class BarangController extends Controller
     // Menampilkan daftar barang
     public function index()
     {
+        $barangs = Barang::with('ketersediaan')->get();
+
         $barangs = Barang::with('kategori')->get(); // Memuat data barang beserta kategori terkait
         return view('barang.index', compact('barangs'));
     }

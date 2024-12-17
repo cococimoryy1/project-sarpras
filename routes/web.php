@@ -19,6 +19,13 @@ use App\Http\Controllers\PengembalianController;
 use App\Http\Controllers\ManajemenPeminjamanController;
 use App\Http\Controllers\ManajemenPengembalianController;
 
+// Detail Peminjaman
+Route::get('/peminjaman/{id}/detail', [PeminjamanController::class, 'showDetail'])->name('peminjaman.detail');
+
+// Detail Pengembalian
+Route::get('/pengembalian/{id}/detail', [PengembalianController::class, 'showDetail'])->name('pengembalian.detail');
+
+
 Route::prefix('manajemen-peminjaman')->group(function () {
     Route::get('/', [ManajemenPeminjamanController::class, 'index']);
     Route::post('/{id}/terima', [ManajemenPeminjamanController::class, 'terima']);
