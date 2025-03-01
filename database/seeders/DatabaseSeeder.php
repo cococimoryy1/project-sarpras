@@ -18,10 +18,10 @@ class DatabaseSeeder extends Seeder
 
         // Buat barang setelah kategori ada
         Barang::create([
-            'nama_barang' => 'Meja',
-            'deskripsi_barang' => 'Meja kayu',
+            'nama_barang' => 'Kursi',
+            'deskripsi_barang' => 'Kursi kayu',
             'kategori_barang_id' => $kategori->id_kategori, // PASTIKAN SESUAI
-            'jumlah_total' => 50,
+            'jumlah_total' => 40,
             'status' => 'tersedia',
         ]);
         $this->call([

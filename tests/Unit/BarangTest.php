@@ -13,16 +13,16 @@ class BarangTest extends TestCase
     public function test_create_barang()
     {
         $barang = Barang::factory()->create([
-            'nama_barang' => 'Meja',
-            'deskripsi_barang' => 'Meja kayu',
+            'nama_barang' => 'Kursi',
+            'deskripsi_barang' => 'Kursi kayu',
             'kategori_barang_id' => 1,
-            'jumlah_total' => 50,
+            'jumlah_total' => 40,
             'status' => 'tersedia',
         ]);
 
         $this->assertDatabaseHas('barangs', [
-            'nama_barang' => 'Meja',
-            'deskripsi_barang' => 'Meja kayu',
+            'nama_barang' => 'Kursi',
+            'deskripsi_barang' => 'Kursi kayu',
         ]);
     }
 
