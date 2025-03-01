@@ -10,12 +10,12 @@ class RoleSeeder extends Seeder
     public function run()
     {
         Role::updateOrInsert(
-            ['name' => 'Admin'], // Kondisi untuk mengecek duplikat
-            ['description' => 'Full access to the system'] // Data yang di-update atau ditambahkan
+            ['id' => 1, 'name' => 'Admin'], // Pastikan ID juga digunakan
+            ['description' => 'Full access to the system']
         );
 
         Role::updateOrInsert(
-            ['name' => 'User'],
+            ['id' => 2, 'name' => 'User'],
             ['description' => 'Regular user with limited permissions']
         );
     }

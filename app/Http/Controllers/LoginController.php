@@ -30,12 +30,11 @@ class LoginController extends Controller
 
     public function logout(Request $request): RedirectResponse
     {
+        Auth::logout(); // Pastikan user benar-benar logout
+    
+        $request->session()->invalidate(); // Hapus sesi
+        $request->session()->regenerateToken(); // Regenerasi token CSRF
 
-    $request->session()->invalidate();
-
-    $request->session()->regenerateToken();
-
-    return redirect('/');
-
+        return redirect('/'); // Redirect ke halaman utama
     }
 }

@@ -60,11 +60,10 @@ class UserController extends Controller
         $user = User::findOrFail($id);
 
         $validator = Validator::make($request->all(), [
-            'username' => 'required|unique:users,username,' . $user->iduser,
-            'email' => 'required|email|unique:users,email,' . $user->iduser,
+            'username' => 'required|unique:users,username,' . $user->iduser . ',iduser',
+            'email' => 'required|email|unique:users,email,' . $user->iduser . ',iduser',
             'password' => 'nullable|min:8',
         ]);
-
         if ($validator->fails()) {
             return redirect()->back()->withErrors($validator)->withInput();
         }
