@@ -4,9 +4,14 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use App\Models\Category;
+
 
 class Barang extends Model
 {
+    
+    use HasFactory;
+
     protected $table = 'barangs'; // Nama tabel barang
     protected $primaryKey = 'barang_id'; // Primary key untuk barang
     protected $fillable = [
