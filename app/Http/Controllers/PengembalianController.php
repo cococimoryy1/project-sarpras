@@ -12,17 +12,20 @@ use Illuminate\Support\Facades\Auth;
 use Carbon\Carbon;
 
 class PengembalianController extends Controller
-{
-    public function index()
+{public function index()
     {
         if (Auth::user()->role_id == 1) {
-            // Admin: Ambil semua pengembalian yang statusnya "dipinjam"
-            $pengembalianList = Pengembalian::with(['peminjaman', 'peminjaman.details.barang', 'peminjaman.user'])
-            ->where('status_pengembalian', 'belum dikembalikan')
-            ->paginate(10);
-         // Pagination dengan 10 item per halaman
+            // Admin: Ambil semua pengembalian dengan status "belum dikembalikan"
+            $pengembalianList = Pengembalian::with(['peminjaman.user', 'peminjaman.details.barang'])
+                ->where('status_pengembalian', 'belum dikembalikan')
+                ->paginate(10);
 
-            return view('pengembalian.index', compact('pengembalianList'));
+            // Admin: Ambil pengembalian yang sudah dikembalikan
+            $pengembalianSelesaiList = Pengembalian::with(['peminjaman.user', 'peminjaman.details.barang'])
+                ->where('status_pengembalian', 'dikembalikan')
+                ->paginate(10);
+
+            return view('pengembalian.index', compact('pengembalianList', 'pengembalianSelesaiList'));
         } else {
             // User: Ambil data peminjaman miliknya dengan status "dipinjam"
             $peminjamanList = Peminjaman::with(['details.barang'])
@@ -30,17 +33,16 @@ class PengembalianController extends Controller
                 ->where('status_peminjaman', 'dipinjam')
                 ->paginate(10);
 
-            // Hitung denda untuk setiap peminjaman detail
-            foreach ($peminjamanList as $peminjaman) {
-                foreach ($peminjaman->details as $detail) {
-                    $hariTerlambat = now()->diffInDays($peminjaman->tanggal_kembali, false);
-                    $detail->denda = $hariTerlambat > 2 ? ($hariTerlambat - 2) * 10000 : 0;
-                }
-            }
+            // User: Ambil peminjaman yang sudah selesai/dikembalikan
+            $peminjamanSelesaiList = Peminjaman::with(['details.barang'])
+                ->where('user_id', Auth::id())
+                ->where('status_peminjaman', 'selesai')
+                ->paginate(10);
 
-            return view('pengembalian.index', compact('peminjamanList'));
+            return view('pengembalian.index', compact('peminjamanList', 'peminjamanSelesaiList'));
         }
     }
+
 
 
 
@@ -115,6 +117,23 @@ class PengembalianController extends Controller
 
         return redirect()->route('pengembalian.index')->with('success', 'Pengembalian berhasil disetujui.');
     }
+
+    public function detail($id)
+    {
+        // Ambil data pengembalian berdasarkan ID
+        $pengembalian = Pengembalian::with([
+            'peminjaman.user',
+            'peminjaman.details.barang'
+        ])->findOrFail($id);
+
+        // Pastikan hanya admin atau user terkait yang dapat melihat
+        if (Auth::user()->role_id == 2 && $pengembalian->peminjaman->user_id != Auth::id()) {
+            return redirect()->route('pengembalian.index')->with('error', 'Anda tidak memiliki akses ke detail ini.');
+        }
+
+        return view('pengembalian.detail', compact('pengembalian'));
+    }
+
 
 
 }

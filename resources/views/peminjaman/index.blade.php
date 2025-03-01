@@ -4,102 +4,103 @@
 <div class="container">
     <!-- Tampilkan untuk User -->
     @if(Auth::user()->role_id == 2)
-    <h2 class="mb-4">Ajukan Peminjaman</h2>
+        <h2 class="mb-4">Ajukan Peminjaman</h2>
 
-    @if(session('success'))
-        <div class="alert alert-success">{{ session('success') }}</div>
-    @endif
+        @if(session('success'))
+            <div class="alert alert-success">{{ session('success') }}</div>
+        @endif
 
-    <!-- Daftar Barang yang Tersedia untuk Dipinjam -->
-    <div class="table-responsive">
-        <table class="table table-striped table-bordered">
-            <thead>
-                <tr>
-                    <th>Nama Barang</th>
-                    <th>Kategori</th>
-                    <th>Jumlah Tersedia</th>
-                    <th>Aksi</th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach($barangs as $barang)
+        <!-- Daftar Barang yang Tersedia untuk Dipinjam -->
+        <div class="table-responsive">
+            <table class="table table-striped table-bordered">
+                <thead>
                     <tr>
-                        <td>{{ $barang->nama_barang }}</td>
-                        <td>{{ $barang->kategori->nama_kategori }}</td>
-                        <td>{{ $barang->ketersediaan ? $barang->ketersediaan->jumlah_tersedia : 'Tidak tersedia' }}</td>
-                        <td>
-                            <a href="#" class="btn btn-primary" data-toggle="modal" data-target="#pinjamModal{{ $barang->barang_id }}">Pinjam</a>
-
-                            <!-- Modal Form Peminjaman -->
-                            <div class="modal fade" id="pinjamModal{{ $barang->barang_id }}" tabindex="-1" role="dialog" aria-labelledby="pinjamModalLabel" aria-hidden="true">
-                                <div class="modal-dialog" role="document">
-                                    <form method="POST" action="{{ route('peminjaman.store') }}">
-                                        @csrf
-                                        <div class="modal-content">
-                                            <div class="modal-header">
-                                                <h5 class="modal-title" id="pinjamModalLabel">Form Peminjaman</h5>
-                                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                                    <span aria-hidden="true">&times;</span>
-                                                </button>
-                                            </div>
-                                            <div class="modal-body">
-                                                <input type="hidden" name="barang_id" value="{{ $barang->barang_id }}">
-                                                <div class="form-group">
-                                                    <label for="jumlah_barang">Jumlah Barang</label>
-                                                    <input type="number" name="jumlah_barang" class="form-control" min="1" max="{{ $barang->ketersediaan ? $barang->ketersediaan->jumlah_tersedia : 0 }}" required>
-                                                </div>
-                                                <div class="form-group">
-                                                    <label for="tanggal_pinjam">Tanggal Peminjaman</label>
-                                                    <input type="date" name="tanggal_pinjam" class="form-control" required>
-                                                </div>
-                                                <div class="form-group">
-                                                    <label for="tanggal_kembali">Tanggal Pengembalian</label>
-                                                    <input type="date" name="tanggal_kembali" class="form-control" required>
-                                                </div>
-                                            </div>
-                                            <div class="modal-footer">
-                                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                                                <button type="submit" class="btn btn-primary">Ajukan Peminjaman</button>
-                                            </div>
-                                        </div>
-                                    </form>
-                                </div>
-                            </div>
-                        </td>
+                        <th>Nama Barang</th>
+                        <th>Kategori</th>
+                        <th>Jumlah Tersedia</th>
+                        <th>Aksi</th>
                     </tr>
-                @endforeach
-            </tbody>
-        </table>
-    </div>
-
-    <!-- Daftar Peminjaman User -->
-    <h3 class="mt-5">Daftar Barang yang Dipinjam</h3>
-
-    @if($userPeminjamanList->isNotEmpty())
-        <table class="table table-striped table-bordered">
-            <thead>
-                <tr>
-                    <th>Nama Barang</th>
-                    <th>Jumlah</th>
-                    <th>Status</th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach($userPeminjamanList as $peminjaman)
-                    @foreach($peminjaman->details as $detail)
+                </thead>
+                <tbody>
+                    @foreach($barangs as $barang)
                         <tr>
-                            <td>{{ $detail->barang->nama_barang }}</td>
-                            <td>{{ $detail->jumlah_barang }}</td>
-                            <td>{{ $peminjaman->status_peminjaman }}</td>
+                            <td>{{ $barang->nama_barang }}</td>
+                            <td>{{ $barang->kategori->nama_kategori }}</td>
+                            <td>{{ $barang->ketersediaan ? $barang->ketersediaan->jumlah_tersedia : 'Tidak tersedia' }}</td>
+                            <td>
+                                <a href="#" class="btn btn-primary" data-toggle="modal" data-target="#pinjamModal{{ $barang->barang_id }}">Pinjam</a>
+
+                                <!-- Modal Form Peminjaman -->
+                                <div class="modal fade" id="pinjamModal{{ $barang->barang_id }}" tabindex="-1" role="dialog" aria-labelledby="pinjamModalLabel" aria-hidden="true">
+                                    <div class="modal-dialog" role="document">
+                                        <form method="POST" action="{{ route('peminjaman.store') }}">
+                                            @csrf
+                                            <div class="modal-content">
+                                                <div class="modal-header">
+                                                    <h5 class="modal-title" id="pinjamModalLabel">Form Peminjaman</h5>
+                                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                        <span aria-hidden="true">&times;</span>
+                                                    </button>
+                                                </div>
+                                                <div class="modal-body">
+                                                    <input type="hidden" name="barang_id" value="{{ $barang->barang_id }}">
+                                                    <div class="form-group">
+                                                        <label for="jumlah_barang">Jumlah Barang</label>
+                                                        <input type="number" name="jumlah_barang" class="form-control" min="1" max="{{ $barang->ketersediaan ? $barang->ketersediaan->jumlah_tersedia : 0 }}" required>
+                                                    </div>
+                                                    <div class="form-group">
+                                                        <label for="tanggal_pinjam">Tanggal Peminjaman</label>
+                                                        <input type="date" name="tanggal_pinjam" class="form-control" required>
+                                                    </div>
+                                                    <div class="form-group">
+                                                        <label for="tanggal_kembali">Tanggal Pengembalian</label>
+                                                        <input type="date" name="tanggal_kembali" class="form-control" required>
+                                                    </div>
+                                                </div>
+                                                <div class="modal-footer">
+                                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                                    <button type="submit" class="btn btn-primary">Ajukan Peminjaman</button>
+                                                </div>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                            </td>
                         </tr>
                     @endforeach
-                @endforeach
-            </tbody>
-        </table>
-    @else
-        <p>Tidak ada barang yang dipinjam atau belum disetujui.</p>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Daftar Peminjaman User -->
+        <h3 class="mt-5">Daftar Barang yang Dipinjam</h3>
+
+        @if($userPeminjamanList->isNotEmpty())
+            <table class="table table-striped table-bordered">
+                <thead>
+                    <tr>
+                        <th>Nama Barang</th>
+                        <th>Jumlah</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach($userPeminjamanList as $peminjaman)
+                        @foreach($peminjaman->details as $detail)
+                            <tr>
+                                <td>{{ $detail->barang->nama_barang }}</td>
+                                <td>{{ $detail->jumlah_barang }}</td>
+                                <td>{{ $peminjaman->status_peminjaman }}</td>
+                            </tr>
+                        @endforeach
+                    @endforeach
+                </tbody>
+            </table>
+        @else
+            <p>Tidak ada barang yang dipinjam atau belum disetujui.</p>
+        @endif
     @endif
-@endif
+
     <!-- Tampilkan untuk Admin -->
     @if(Auth::user()->role_id == 1)
         <h2 class="mt-5">Daftar Peminjaman Menunggu Persetujuan</h2>
@@ -113,33 +114,91 @@
                 <thead>
                     <tr>
                         <th>Nama Pemohon</th>
-                        <th>Barang</th>
-                        <th>Jumlah</th>
+                        <th>Detail Barang</th>
                         <th>Status</th>
                         <th>Aksi</th>
                     </tr>
                 </thead>
                 <tbody>
                     @foreach($peminjamanList as $peminjaman)
-                    @foreach($peminjaman->details as $detail)
-                    <tr>
-                        <td>{{ $peminjaman->user->username }}</td>
-                        <td>{{ $detail->barang->nama_barang }}</td>
-                        <td>{{ $detail->jumlah_barang }}</td>
-                        <td>{{ $peminjaman->status_peminjaman }}</td>
-                        <td>
-                            <form action="{{ route('peminjaman.approve', $peminjaman->peminjaman_id) }}" method="POST" style="display: inline-block;">
-                                @csrf
-                                <button type="submit" class="btn btn-success">Setujui</button>
-                            </form>
-                            <form action="{{ route('peminjaman.reject', $peminjaman->peminjaman_id) }}" method="POST" style="display: inline-block;">
-                                @csrf
-                                @method('DELETE')
-                                <button type="submit" class="btn btn-danger">Tolak</button>
-                            </form>
-                        </td>
-                    </tr>
+                        <tr>
+                            <td>{{ $peminjaman->user->username }}</td>
+                            <td>
+                                <ul>
+                                    @foreach($peminjaman->details as $detail)
+                                        <li>{{ $detail->barang->nama_barang }} ({{ $detail->jumlah_barang }})</li>
+                                    @endforeach
+                                </ul>
+                            </td>
+                            <td>
+                                @if($peminjaman->status_peminjaman == 'pending')
+                                    <span class="badge bg-warning">Pending</span>
+                                @elseif($peminjaman->status_peminjaman == 'dipinjam')
+                                    <span class="badge bg-primary">Dipinjam</span>
+                                @elseif($peminjaman->status_peminjaman == 'dibatalkan')
+                                    <span class="badge bg-danger">Dibatalkan</span>
+                                @else
+                                    <span class="badge bg-success">Selesai</span>
+                                @endif
+                            </td>
+                            <td>
+                                @if($peminjaman->status_peminjaman == 'pending')
+                                    <form id="actionForm-{{ $peminjaman->peminjaman_id }}" action="" method="POST" style="display: inline-block;">
+                                        @csrf
+                                        <input type="hidden" id="methodField-{{ $peminjaman->peminjaman_id }}" name="_method" value="POST">
+                                        <button type="button" class="btn btn-success"
+                                                onclick="submitAction('{{ route('peminjaman.approve', $peminjaman->peminjaman_id) }}', 'POST', {{ $peminjaman->peminjaman_id }})">
+                                            Setujui
+                                        </button>
+                                        <button type="button" class="btn btn-danger"
+                                                onclick="submitAction('{{ route('peminjaman.reject', $peminjaman->peminjaman_id) }}', 'DELETE', {{ $peminjaman->peminjaman_id }})">
+                                            Tolak
+                                        </button>
+                                    </form>
+                                @else
+                                    <a href="{{ route('peminjaman.detail', $peminjaman->peminjaman_id) }}" class="btn btn-info">Lihat Detail</a>
+                                @endif
+                            </td>
+                        </tr>
                     @endforeach
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Daftar Peminjaman yang Sudah Disetujui -->
+        <h3 class="mt-5">Daftar Peminjaman yang Sudah Disetujui</h3>
+        <div class="table-responsive">
+            <table class="table table-striped table-bordered">
+                <thead>
+                    <tr>
+                        <th>Nama Pemohon</th>
+                        <th>Detail Barang</th>
+                        <th>Tanggal Pinjam</th>
+                        <th>Tanggal Kembali</th>
+                        <th>Status</th>
+                        <th>Aksi</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach($peminjamanApprovedList as $peminjaman)
+                        <tr>
+                            <td>{{ $peminjaman->user->username }}</td>
+                            <td>
+                                <ul>
+                                    @foreach($peminjaman->details as $detail)
+                                        <li>{{ $detail->barang->nama_barang }} ({{ $detail->jumlah_barang }})</li>
+                                    @endforeach
+                                </ul>
+                            </td>
+                            <td>{{ $peminjaman->tanggal_pinjam }}</td>
+                            <td>{{ $peminjaman->tanggal_kembali }}</td>
+                            <td>
+                                <span class="badge bg-primary">Dipinjam</span>
+                            </td>
+                            <td>
+                                <a href="{{ route('peminjaman.detail', $peminjaman->peminjaman_id) }}" class="btn btn-success">Detail</a>
+                            </td>
+                        </tr>
                     @endforeach
                 </tbody>
             </table>

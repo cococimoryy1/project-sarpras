@@ -85,15 +85,17 @@ Route::middleware('auth')->group(function () {
     Route::post('/peminjaman/{id}/approve', [PeminjamanController::class, 'accPeminjaman'])->name('peminjaman.approve');
     Route::delete('/peminjaman/{id}/reject', [PeminjamanController::class, 'tolakPeminjaman'])->name('peminjaman.reject');
     Route::post('/peminjaman/{id}/return', [PeminjamanController::class, 'return'])->name('peminjaman.return');
-
+    Route::get('/peminjaman/{id}/detail', [PeminjamanController::class, 'detail'])->name('peminjaman.detail');
     // Route untuk pengembalian
-// Untuk melihat daftar peminjaman/pengembalian
-Route::get('/pengembalian', [PengembalianController::class, 'index'])->name('pengembalian.index');
-Route::post('/pengembalian/{peminjaman_id}', [PengembalianController::class, 'store'])->name('pengembalian.store');
+    // Untuk melihat daftar peminjaman/pengembalian
+    Route::get('/pengembalian', [PengembalianController::class, 'index'])->name('pengembalian.index');
+    Route::post('/pengembalian/{peminjaman_id}', [PengembalianController::class, 'store'])->name('pengembalian.store');
 
-// Untuk admin menyetujui pengembalian
-Route::post('/pengembalian/approve/{peminjaman_id}', [PengembalianController::class, 'accPengembalian'])->name('pengembalian.acc');
-Route::get('/barang/tersedia', [BarangController::class, 'tersedia'])->name('barang.tersedia');
+    // Untuk admin menyetujui pengembalian
+    Route::post('/pengembalian/approve/{peminjaman_id}', [PengembalianController::class, 'accPengembalian'])->name('pengembalian.acc');
+    Route::get('/pengembalian/{id}/detail', [PengembalianController::class, 'detail'])->name('pengembalian.detail');
+
+    Route::get('/barang/tersedia', [BarangController::class, 'tersedia'])->name('barang.tersedia');
 
 });
 

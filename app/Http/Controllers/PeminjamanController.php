@@ -17,26 +17,34 @@ class PeminjamanController extends Controller
         // Ambil data barang dengan relasi kategori dan ketersediaan
         $barangs = Barang::with('kategori', 'ketersediaan')->get();
 
-        // Ambil daftar peminjaman hanya jika user adalah admin (role_id == 1)
+        // Ambil daftar peminjaman pending untuk admin
         $peminjamanList = [];
+        $peminjamanApprovedList = []; // Tambahkan variabel ini
         if (Auth::user()->role_id == 1) {
+            // Daftar peminjaman yang pending
             $peminjamanList = Peminjaman::with(['user', 'details.barang'])
-                ->whereIn('status_peminjaman', ['pending']) // Ambil peminjaman yang pending dan dipinjam
+                ->where('status_peminjaman', 'pending') // Ambil peminjaman yang berstatus pending
+                ->get();
+
+            // Daftar peminjaman yang sudah disetujui (status dipinjam)
+            $peminjamanApprovedList = Peminjaman::with(['user', 'details.barang'])
+                ->where('status_peminjaman', 'dipinjam') // Ambil peminjaman yang disetujui
                 ->get();
         }
 
-        // Jika user adalah user (role_id == 2), tampilkan daftar peminjaman mereka yang berstatus pending atau dipinjam
+        // Daftar peminjaman untuk user biasa
         $userPeminjamanList = [];
         if (Auth::user()->role_id == 2) {
             $userPeminjamanList = Peminjaman::with(['details.barang'])
-                ->where('user_id', Auth::id()) // Ambil peminjaman milik user yang sedang login
-                ->whereIn('status_peminjaman', ['pending', 'dipinjam']) // Status peminjaman yang pending atau dipinjam
+                ->where('user_id', Auth::id())
+                ->whereIn('status_peminjaman', ['pending', 'dipinjam'])
                 ->get();
         }
 
-        // Kirim data barang dan peminjaman ke view
-        return view('peminjaman.index', compact('barangs', 'peminjamanList', 'userPeminjamanList'));
+        // Kirim data ke view
+        return view('peminjaman.index', compact('barangs', 'peminjamanList', 'peminjamanApprovedList', 'userPeminjamanList'));
     }
+
 
 
 
@@ -163,6 +171,22 @@ class PeminjamanController extends Controller
 
     return redirect()->route('peminjaman.index')->with('success', 'Barang berhasil dikembalikan.');
 }
+
+public function detail($id)
+{
+    // Ambil data peminjaman berdasarkan ID dengan relasi user dan barang
+    $peminjaman = Peminjaman::with(['user', 'details.barang'])
+        ->findOrFail($id);
+
+    // Pastikan hanya admin yang dapat mengakses detail ini
+    if (Auth::user()->role_id != 1) {
+        return redirect()->route('peminjaman.index')->with('error', 'Anda tidak memiliki akses ke halaman ini.');
+    }
+
+    // Tampilkan halaman detail
+    return view('peminjaman.detail', compact('peminjaman'));
+}
+
 
 }
 
